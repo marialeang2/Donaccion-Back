@@ -1,0 +1,641 @@
+{
+	"info": {
+		"_postman_id": "96e18fef-ad41-4f95-84eb-dd6fe5ce0e44",
+		"name": "Participation Request Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32524555"
+	},
+	"item": [
+		{
+			"name": "Create User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.response.json()\r",
+							"pm.globals.set(\"user_id_d\", data.id);\r",
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"   pm.response.to.have.status(201);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"user_example\",\r\n    \"email\": \"user_test123@example.com\",\r\n    \"password\": \"password\",\r\n    \"user_type\": \"foundation\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base}}/users",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Foundation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.response.json()\r",
+							"pm.globals.set(\"foundation_id2\", data.id);\r",
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"   pm.response.to.have.status(201);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"user_id\": \"{{user_id_d}}\",\r\n  \"legal_name\": \"Fundación Ejemplo Oficial\",\r\n  \"address\": \"Calle Principal #123\",\r\n  \"phone\": \"123456789\",\r\n  \"website\": \"https://fundacion-ejemplo.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base}}/foundations",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"foundations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Accion Social",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.response.json()\r",
+							"pm.globals.set(\"social_id\", data.id);\r",
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"   pm.response.to.have.status(201);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"foundation_id\": \"{{foundation_id2}}\",\r\n  \"description\": \"Descripción de la acción social\",\r\n  \"start_date\": \"2023-06-01T10:00:00Z\",\r\n  \"end_date\": \"2023-06-05T18:00:00Z\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base}}/social-actions",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"social-actions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Participation Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.response.json()\r",
+							"pm.globals.set(\"participation_id\", data.id);\r",
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"   pm.response.to.have.status(201);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"user_id\": \"{{user_id_d}}\",\r\n  \"social_action_id\": \"{{social_id}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base}}/participation-requests",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"participation-requests"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all participation requests",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Number of participation requests > ' + 0, function () {\r",
+							"   var data = pm.response.json()\r",
+							"   pm.expect(data.length).to.greaterThan(0)\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"   pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base}}/participation-requests",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"participation-requests"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a participation request by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"   pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base}}/participation-requests/{{participation_id}}",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"participation-requests",
+						"{{participation_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get participation request by user id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"   pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base}}/participation-requests/user/{{user_id_f}}",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"participation-requests",
+						"user",
+						"{{user_id_f}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get participation request by social action id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"   pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base}}/participation-requests/social-action/{{social_id}}",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"participation-requests",
+						"social-action",
+						"{{social_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get pending participation requests",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"   pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base}}/participation-requests/social-action/{{social_id}}/pending",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"participation-requests",
+						"social-action",
+						"{{social_id}}",
+						"pending"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get bad participation request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {\r",
+							"   pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base}}/participation-requests/00000000-0000-0000-0000-000000000000",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"participation-requests",
+						"00000000-0000-0000-0000-000000000000"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update participation request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"   pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"status\": \"accepted\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base}}/participation-requests/{{participation_id}}",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"participation-requests",
+						"{{participation_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modify bad participation request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {\r",
+							"   pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"status\": \"pending\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base}}/participation-requests/00000000-0000-0000-0000-000000000000",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"participation-requests",
+						"00000000-0000-0000-0000-000000000000"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete participation request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"   pm.response.to.have.status(204);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base}}/participation-requests/{{participation_id}}",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"participation-requests",
+						"{{participation_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete bad participation request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {\r",
+							"   pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base}}/participation-requests/00000000-0000-0000-0000-000000000000",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"participation-requests",
+						"00000000-0000-0000-0000-000000000000"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete social actions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"   pm.response.to.have.status(204);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base}}/social-actions/{{social_id}}",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"social-actions",
+						"{{social_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete foundation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"   pm.response.to.have.status(204);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base}}/foundations/{{foundation_id2}}",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"foundations",
+						"{{foundation_id2}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"   pm.response.to.have.status(204);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base}}/users/{{user_id_d}}",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"users",
+						"{{user_id_d}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

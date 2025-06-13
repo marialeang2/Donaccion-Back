@@ -1,0 +1,41 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { User } from './entities/user.entity';
+import { Foundation } from './entities/foundation.entity';
+import { Donation } from './entities/donation.entity';
+import { SocialAction } from './entities/social_action.entity';
+import { ParticipationRequest } from './entities/participation_request.entity';
+import { Comment } from './entities/comment.entity';
+import { Rating } from './entities/rating.entity';
+import { Notification } from './entities/notification.entity';
+import { Certificate } from './entities/certificate.entity';
+
+@Module({
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres', // Specify the database type
+      host: process.env.DB_HOST || 'localhost', // Use environment variables
+      port: parseInt(process.env.DB_PORT, 10) || 5432,
+      username: process.env.DB_USERNAME || 'your_username', // Replace with your DB username or use env var
+      password: process.env.DB_PASSWORD || 'your_password', // Replace with your DB password or use env var
+      database: process.env.DB_DATABASE || 'your_database', // Replace with your DB name or use env var
+      entities: [
+        User,
+        Foundation,
+        Donation,
+        SocialAction,
+        ParticipationRequest,
+        Comment,
+        Rating,
+        Notification,
+        Certificate,
+      ],
+      synchronize: true, // Auto-create schema (use migrations in production!)
+    }),
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}

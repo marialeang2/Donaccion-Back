@@ -1,0 +1,1273 @@
+{
+	"info": {
+		"_postman_id": "7979fab3-3ec3-48eb-b153-b92c154cf52f",
+		"name": "Administradores por Roles",
+		"description": "Colección para probar los diferentes roles de administradores",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29051645",
+		"_collection_link": "https://speeding-space-692344.postman.co/workspace/ArquiSw~ad77a004-278a-44d3-9e09-ed562659c928/collection/29051645-7979fab3-3ec3-48eb-b153-b92c154cf52f?action=share&source=collection_link&creator=29051645"
+	},
+	"item": [
+		{
+			"name": "1. Admin Full (admin@admin.com)",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.environment.set(\"token_admin_full\", jsonData.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"email\": \"admin@admin.com\",\n  //\"email\": \"fundacion@gmail.com\",\n  \"password\": \"12345678\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Iniciar sesión como administrador completo"
+					},
+					"response": []
+				},
+				{
+					"name": "1. Crear oportunidad",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_full}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"foundation_id\": \"{{foundation_id}}\",\n  \"description\": \"Oportunidad creada por admin full\",\n  \"start_date\": \"2025-06-01\",\n  \"end_date\": \"2025-07-01\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities"
+							]
+						},
+						"description": "Crear una nueva oportunidad como admin completo"
+					},
+					"response": []
+				},
+				{
+					"name": "2. Leer oportunidades",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_full}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities"
+							]
+						},
+						"description": "Obtener todas las oportunidades como admin completo"
+					},
+					"response": []
+				},
+				{
+					"name": "3. Actualizar oportunidad",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_full}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Oportunidad actualizada por admin full\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities/{{opportunity_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities",
+								"{{opportunity_id}}"
+							]
+						},
+						"description": "Actualizar una oportunidad como admin completo"
+					},
+					"response": []
+				},
+				{
+					"name": "4. Ver solicitudes",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_full}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities/{{opportunity_id}}/applications",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities",
+								"{{opportunity_id}}",
+								"applications"
+							]
+						},
+						"description": "Ver solicitudes de una oportunidad como admin completo"
+					},
+					"response": []
+				},
+				{
+					"name": "5. Aprobar solicitud",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_full}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"accepted\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/participation-requests/{{request_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"participation-requests",
+								"{{request_id}}"
+							]
+						},
+						"description": "Aprobar una solicitud como admin completo"
+					},
+					"response": []
+				},
+				{
+					"name": "6. Eliminar oportunidad",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_full}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities/{{opportunity_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities",
+								"{{opportunity_id}}"
+							]
+						},
+						"description": "Eliminar una oportunidad como admin completo"
+					},
+					"response": []
+				}
+			],
+			"description": "Usuario con todos los permisos para todos los recursos"
+		},
+		{
+			"name": "2. Admin Lector (admin@lector.com)",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.environment.set(\"token_admin_lector\", jsonData.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@lector.com\",\n  \"password\": \"12345678\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Iniciar sesión como administrador de lectura"
+					},
+					"response": []
+				},
+				{
+					"name": "1. Leer oportunidades",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_lector}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities"
+							]
+						},
+						"description": "Obtener todas las oportunidades como admin lector"
+					},
+					"response": []
+				},
+				{
+					"name": "2. Leer solicitudes",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_lector}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities/{{opportunity_id}}/applications",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities",
+								"{{opportunity_id}}",
+								"applications"
+							]
+						},
+						"description": "Ver solicitudes de una oportunidad como admin lector"
+					},
+					"response": []
+				},
+				{
+					"name": "3. Intentar crear oportunidad (debe fallar)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_lector}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"foundation_id\": \"{{foundation_id}}\",\n  \"description\": \"Oportunidad creada por admin lector\",\n  \"start_date\": \"2025-06-01\",\n  \"end_date\": \"2025-07-01\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities"
+							]
+						},
+						"description": "Intentar crear una oportunidad como admin lector (debería fallar)"
+					},
+					"response": []
+				},
+				{
+					"name": "4. Intentar actualizar oportunidad (debe fallar)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_lector}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Oportunidad actualizada por admin lector\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities/{{opportunity_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities",
+								"{{opportunity_id}}"
+							]
+						},
+						"description": "Intentar actualizar una oportunidad como admin lector (debería fallar)"
+					},
+					"response": []
+				},
+				{
+					"name": "5. Intentar aprobar solicitud (debe fallar)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_lector}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"accepted\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/participation-requests/{{request_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"participation-requests",
+								"{{request_id}}"
+							]
+						},
+						"description": "Intentar aprobar una solicitud como admin lector (debería fallar)"
+					},
+					"response": []
+				},
+				{
+					"name": "6. Intentar eliminar oportunidad (debe fallar)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_lector}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities/{{opportunity_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities",
+								"{{opportunity_id}}"
+							]
+						},
+						"description": "Intentar eliminar una oportunidad como admin lector (debería fallar)"
+					},
+					"response": []
+				}
+			],
+			"description": "Usuario con permisos solo de lectura"
+		},
+		{
+			"name": "3. Admin Escritor (admin@escritor.com)",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.environment.set(\"token_admin_escritor\", jsonData.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@escritor.com\",\n  \"password\": \"12345678\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Iniciar sesión como administrador escritor"
+					},
+					"response": []
+				},
+				{
+					"name": "1. Crear oportunidad",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_escritor}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"foundation_id\": \"{{foundation_id}}\",\n  \"description\": \"Oportunidad creada por admin escritor\",\n  \"start_date\": \"2025-06-01\",\n  \"end_date\": \"2025-07-01\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities"
+							]
+						},
+						"description": "Crear una nueva oportunidad como admin escritor"
+					},
+					"response": []
+				},
+				{
+					"name": "2. Leer oportunidades",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_escritor}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities"
+							]
+						},
+						"description": "Obtener todas las oportunidades como admin escritor"
+					},
+					"response": []
+				},
+				{
+					"name": "3. Actualizar oportunidad",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_escritor}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Oportunidad actualizada por admin escritor\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities/{{opportunity_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities",
+								"{{opportunity_id}}"
+							]
+						},
+						"description": "Actualizar una oportunidad como admin escritor"
+					},
+					"response": []
+				},
+				{
+					"name": "4. Aprobar solicitud",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_escritor}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"accepted\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/participation-requests/{{request_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"participation-requests",
+								"{{request_id}}"
+							]
+						},
+						"description": "Aprobar una solicitud como admin escritor"
+					},
+					"response": []
+				},
+				{
+					"name": "5. Intentar eliminar oportunidad (debe fallar)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_escritor}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities/{{opportunity_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities",
+								"{{opportunity_id}}"
+							]
+						},
+						"description": "Intentar eliminar una oportunidad como admin escritor (debería fallar)"
+					},
+					"response": []
+				}
+			],
+			"description": "Usuario con permisos de creación y actualización"
+		},
+		{
+			"name": "4. Admin Eliminador (admin@eliminador.com)",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.environment.set(\"token_admin_eliminador\", jsonData.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@eliminador.com\",\n  \"password\": \"12345678\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Iniciar sesión como administrador eliminador"
+					},
+					"response": []
+				},
+				{
+					"name": "1. Leer oportunidades",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_eliminador}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities"
+							]
+						},
+						"description": "Obtener todas las oportunidades como admin eliminador"
+					},
+					"response": []
+				},
+				{
+					"name": "2. Intentar crear oportunidad (debe fallar)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_eliminador}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"foundation_id\": \"{{foundation_id}}\",\n  \"description\": \"Oportunidad creada por admin eliminador\",\n  \"start_date\": \"2025-06-01\",\n  \"end_date\": \"2025-07-01\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities"
+							]
+						},
+						"description": "Intentar crear una oportunidad como admin eliminador (debería fallar)"
+					},
+					"response": []
+				},
+				{
+					"name": "3. Intentar actualizar oportunidad (debe fallar)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_eliminador}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Oportunidad actualizada por admin eliminador\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities/{{opportunity_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities",
+								"{{opportunity_id}}"
+							]
+						},
+						"description": "Intentar actualizar una oportunidad como admin eliminador (debería fallar)"
+					},
+					"response": []
+				},
+				{
+					"name": "4. Eliminar oportunidad",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_eliminador}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities/{{opportunity_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities",
+								"{{opportunity_id}}"
+							]
+						},
+						"description": "Eliminar una oportunidad como admin eliminador"
+					},
+					"response": []
+				},
+				{
+					"name": "5. Eliminar solicitud",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_eliminador}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/participation-requests/{{request_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"participation-requests",
+								"{{request_id}}"
+							]
+						},
+						"description": "Eliminar una solicitud como admin eliminador"
+					},
+					"response": []
+				}
+			],
+			"description": "Usuario con permisos de eliminación"
+		},
+		{
+			"name": "5. Configuración de Usuarios Admin",
+			"item": [
+				{
+					"name": "Registrar admin@admin.com",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Admin Full\",\n  \"email\": \"admin@admin.com\",\n  \"password\": \"12345678\",\n  \"user_type\": \"foundation\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"register"
+							]
+						},
+						"description": "Registrar usuario admin completo"
+					},
+					"response": []
+				},
+				{
+					"name": "Registrar admin@lector.com",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Admin Lector\",\n  \"email\": \"admin@lector.com\",\n  \"password\": \"12345678\",\n  \"user_type\": \"foundation\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"register"
+							]
+						},
+						"description": "Registrar usuario admin lector"
+					},
+					"response": []
+				},
+				{
+					"name": "Registrar admin@escritor.com",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Admin Escritor\",\n  \"email\": \"admin@escritor.com\",\n  \"password\": \"12345678\",\n  \"user_type\": \"foundation\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"register"
+							]
+						},
+						"description": "Registrar usuario admin escritor"
+					},
+					"response": []
+				},
+				{
+					"name": "Registrar admin@eliminador.com",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Admin Eliminador\",\n  \"email\": \"admin@eliminador.com\",\n  \"password\": \"12345678\",\n  \"user_type\": \"foundation\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"register"
+							]
+						},
+						"description": "Registrar usuario admin eliminador"
+					},
+					"response": []
+				}
+			],
+			"description": "Crear los usuarios administradores si no existen"
+		},
+		{
+			"name": "6. Flujo completo de oportunidad",
+			"item": [
+				{
+					"name": "1. Crear oportunidad (admin escritor)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.environment.set(\"opportunity_id\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_escritor}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"foundation_id\": \"{{foundation_id}}\",\n  \"description\": \"Oportunidad para flujo completo\",\n  \"start_date\": \"2025-06-01\",\n  \"end_date\": \"2025-07-01\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities"
+							]
+						},
+						"description": "Crear una nueva oportunidad usando admin escritor"
+					},
+					"response": []
+				},
+				{
+					"name": "2. Ver oportunidad (admin lector)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_lector}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities/{{opportunity_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities",
+								"{{opportunity_id}}"
+							]
+						},
+						"description": "Ver detalle de la oportunidad usando admin lector"
+					},
+					"response": []
+				},
+				{
+					"name": "3. Aplicar a oportunidad (usuario regular)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.environment.set(\"request_id\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_user}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"Me gustaría participar en esta oportunidad\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities/{{opportunity_id}}/apply",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities",
+								"{{opportunity_id}}",
+								"apply"
+							]
+						},
+						"description": "Aplicar a la oportunidad usando un usuario regular"
+					},
+					"response": []
+				},
+				{
+					"name": "4. Ver solicitudes (admin lector)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_lector}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities/{{opportunity_id}}/applications",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities",
+								"{{opportunity_id}}",
+								"applications"
+							]
+						},
+						"description": "Ver solicitudes de la oportunidad usando admin lector"
+					},
+					"response": []
+				},
+				{
+					"name": "5. Aprobar solicitud (admin escritor)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_escritor}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"accepted\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/participation-requests/{{request_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"participation-requests",
+								"{{request_id}}"
+							]
+						},
+						"description": "Aprobar la solicitud usando admin escritor"
+					},
+					"response": []
+				},
+				{
+					"name": "6. Eliminar oportunidad (admin eliminador)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin_eliminador}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/opportunities/{{opportunity_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"opportunities",
+								"{{opportunity_id}}"
+							]
+						},
+						"description": "Eliminar la oportunidad usando admin eliminador"
+					},
+					"response": []
+				}
+			],
+			"description": "Prueba de flujo completo: crear, ver, aplicar, aprobar, eliminar"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "opportunity_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "request_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "foundation_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

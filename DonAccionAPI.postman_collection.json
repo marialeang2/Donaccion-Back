@@ -1,0 +1,1427 @@
+{
+	"info": {
+		"_postman_id": "b7c64eb4-5a47-4e81-8bbd-8b734e5c1fba",
+		"name": "Social Action Platform API",
+		"description": "Esta colección contiene todas las solicitudes para probar la API de la plataforma de acciones sociales y donaciones.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Autenticación",
+			"item": [
+				{
+					"name": "Registro de Usuario",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    pm.environment.set(\"user_id\", jsonData.id);",
+									"    pm.test(\"Usuario creado exitosamente\", function() {",
+									"        pm.expect(jsonData.id).to.exist;",
+									"        pm.expect(jsonData.email).to.eql(pm.environment.get(\"user_email\"));",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Usuario de Prueba\",\n  \"email\": \"{{user_email}}\",\n  \"password\": \"{{user_password}}\",\n  \"user_type\": \"user\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Registra un nuevo usuario en el sistema"
+					},
+					"response": []
+				},
+				{
+					"name": "Inicio de Sesión",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"if (pm.response.code === 200) {",
+									"    pm.environment.set(\"jwt_token\", jsonData.access_token);",
+									"    pm.environment.set(\"user_id\", jsonData.user.id);",
+									"    ",
+									"    pm.test(\"Login exitoso - Token JWT obtenido\", function() {",
+									"        pm.expect(jsonData.access_token).to.exist;",
+									"        pm.expect(jsonData.user).to.exist;",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{user_email}}\",\n  \"password\": \"{{user_password}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Autentica a un usuario y devuelve un token JWT"
+					},
+					"response": []
+				},
+				{
+					"name": "Perfil de Usuario",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Perfil de usuario obtenido correctamente\", function() {",
+									"    pm.expect(jsonData.id).to.eql(pm.environment.get(\"user_id\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"profile"
+							]
+						},
+						"description": "Obtiene el perfil del usuario autenticado"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para autenticación y gestión de usuarios"
+		},
+		{
+			"name": "Fundaciones",
+			"item": [
+				{
+					"name": "Crear Fundación",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    pm.environment.set(\"foundation_id\", jsonData.id);",
+									"    ",
+									"    pm.test(\"Fundación creada exitosamente\", function() {",
+									"        pm.expect(jsonData.id).to.exist;",
+									"        pm.expect(jsonData.legal_name).to.eql(\"Fundación de Prueba\");",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"legal_name\": \"Fundación de Prueba\",\n  \"address\": \"Calle 123 #45-67, Bogotá\",\n  \"phone\": \"+573001234567\",\n  \"website\": \"https://fundacionprueba.org\",\n  \"user_id\": \"{{user_id}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/foundations",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"foundations"
+							]
+						},
+						"description": "Crea una nueva fundación"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Fundaciones",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Lista de fundaciones obtenida\", function() {",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/foundations",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"foundations"
+							]
+						},
+						"description": "Obtiene todas las fundaciones registradas"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Fundación por ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Fundación obtenida correctamente\", function() {",
+									"    pm.expect(jsonData.id).to.eql(pm.environment.get(\"foundation_id\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/foundations/{{foundation_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"foundations",
+								"{{foundation_id}}"
+							]
+						},
+						"description": "Obtiene una fundación específica por su ID"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para la gestión de fundaciones"
+		},
+		{
+			"name": "Acciones Sociales",
+			"item": [
+				{
+					"name": "Crear Acción Social",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    pm.environment.set(\"social_action_id\", jsonData.id);",
+									"    ",
+									"    pm.test(\"Acción social creada exitosamente\", function() {",
+									"        pm.expect(jsonData.id).to.exist;",
+									"        pm.expect(jsonData.description).to.exist;",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Jornada de limpieza en parque local\",\n  \"start_date\": \"{{$isoTimestamp}}\",\n  \"end_date\": \"{{$isoTimestamp}}\",\n  \"foundation_id\": \"{{foundation_id}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/social-actions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"social-actions"
+							]
+						},
+						"description": "Crea una nueva acción social"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Acciones Sociales",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Lista de acciones sociales obtenida\", function() {",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/social-actions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"social-actions"
+							]
+						},
+						"description": "Obtiene todas las acciones sociales"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Acción Social por ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Acción social obtenida correctamente\", function() {",
+									"    pm.expect(jsonData.id).to.eql(pm.environment.get(\"social_action_id\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/social-actions/{{social_action_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"social-actions",
+								"{{social_action_id}}"
+							]
+						},
+						"description": "Obtiene una acción social específica por su ID"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para la gestión de acciones sociales"
+		},
+		{
+			"name": "Donaciones",
+			"item": [
+				{
+					"name": "Crear Donación",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    pm.environment.set(\"donation_id\", jsonData.id);",
+									"    ",
+									"    pm.test(\"Donación creada exitosamente\", function() {",
+									"        pm.expect(jsonData.id).to.exist;",
+									"        pm.expect(jsonData.amount).to.eql(100000);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 100000,\n  \"user_id\": \"{{user_id}}\",\n  \"foundation_id\": \"{{foundation_id}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/donations",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"donations"
+							]
+						},
+						"description": "Registra una nueva donación"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Donaciones",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Lista de donaciones obtenida\", function() {",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/donations",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"donations"
+							]
+						},
+						"description": "Obtiene todas las donaciones"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Donaciones por Usuario",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Donaciones del usuario obtenidas\", function() {",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"    if (jsonData.length > 0) {",
+									"        pm.expect(jsonData[0].user_id).to.eql(pm.environment.get(\"user_id\"));",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/donations/user/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"donations",
+								"user",
+								"{{user_id}}"
+							]
+						},
+						"description": "Obtiene todas las donaciones realizadas por un usuario específico"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para la gestión de donaciones"
+		},
+		{
+			"name": "Solicitudes de Participación",
+			"item": [
+				{
+					"name": "Crear Solicitud de Participación",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    pm.environment.set(\"participation_request_id\", jsonData.id);",
+									"    ",
+									"    pm.test(\"Solicitud de participación creada exitosamente\", function() {",
+									"        pm.expect(jsonData.id).to.exist;",
+									"        pm.expect(jsonData.status).to.eql(\"pending\");",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"{{user_id}}\",\n  \"social_action_id\": \"{{social_action_id}}\",\n  \"status\": \"pending\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/participation-requests",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"participation-requests"
+							]
+						},
+						"description": "Crea una nueva solicitud para participar en una acción social"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Solicitudes por Acción Social",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Solicitudes de participación obtenidas\", function() {",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"    if (jsonData.length > 0) {",
+									"        pm.expect(jsonData[0].social_action_id).to.eql(pm.environment.get(\"social_action_id\"));",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/participation-requests/social-action/{{social_action_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"participation-requests",
+								"social-action",
+								"{{social_action_id}}"
+							]
+						},
+						"description": "Obtiene todas las solicitudes para una acción social específica"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Solicitudes Pendientes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Solicitudes pendientes obtenidas\", function() {",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"    if (jsonData.length > 0) {",
+									"        pm.expect(jsonData[0].status).to.eql(\"pending\");",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/participation-requests/social-action/{{social_action_id}}/pending",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"participation-requests",
+								"social-action",
+								"{{social_action_id}}",
+								"pending"
+							]
+						},
+						"description": "Obtiene todas las solicitudes pendientes para una acción social específica"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para la gestión de solicitudes de participación en acciones sociales"
+		},
+		{
+			"name": "Certificados",
+			"item": [
+				{
+					"name": "Crear Certificado",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    pm.environment.set(\"certificate_id\", jsonData.id);",
+									"    ",
+									"    pm.test(\"Certificado creado exitosamente\", function() {",
+									"        pm.expect(jsonData.id).to.exist;",
+									"        pm.expect(jsonData.user_id).to.eql(pm.environment.get(\"user_id\"));",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"{{user_id}}\",\n  \"description\": \"Certificado de participación en acción social\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/certificates",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"certificates"
+							]
+						},
+						"description": "Genera un nuevo certificado de participación"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Certificados por Usuario",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Certificados del usuario obtenidos\", function() {",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"    if (jsonData.length > 0) {",
+									"        pm.expect(jsonData[0].user_id).to.eql(pm.environment.get(\"user_id\"));",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/certificates/user/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"certificates",
+								"user",
+								"{{user_id}}"
+							]
+						},
+						"description": "Obtiene todos los certificados de un usuario específico"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para la gestión de certificados de participación"
+		},
+		{
+			"name": "Calificaciones y Comentarios",
+			"item": [
+				{
+					"name": "Crear Calificación para Donación",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    pm.environment.set(\"rating_id\", jsonData.id);",
+									"    ",
+									"    pm.test(\"Calificación creada exitosamente\", function() {",
+									"        pm.expect(jsonData.id).to.exist;",
+									"        pm.expect(jsonData.rating).to.eql(5);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"{{user_id}}\",\n  \"donation_id\": \"{{donation_id}}\",\n  \"rating\": 5\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/ratings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ratings"
+							]
+						},
+						"description": "Crea una nueva calificación para una donación"
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Calificación para Acción Social",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    pm.environment.set(\"rating_action_id\", jsonData.id);",
+									"    ",
+									"    pm.test(\"Calificación para acción social creada exitosamente\", function() {",
+									"        pm.expect(jsonData.id).to.exist;",
+									"        pm.expect(jsonData.rating).to.eql(4);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"{{user_id}}\",\n  \"social_action_id\": \"{{social_action_id}}\",\n  \"rating\": 4\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/ratings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ratings"
+							]
+						},
+						"description": "Crea una nueva calificación para una acción social"
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Comentario para Donación",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    pm.environment.set(\"comment_id\", jsonData.id);",
+									"    ",
+									"    pm.test(\"Comentario creado exitosamente\", function() {",
+									"        pm.expect(jsonData.id).to.exist;",
+									"        pm.expect(jsonData.text).to.exist;",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"{{user_id}}\",\n  \"donation_id\": \"{{donation_id}}\",\n  \"text\": \"Excelente experiencia con esta donación\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/comments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comments"
+							]
+						},
+						"description": "Crea un nuevo comentario para una donación"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Comentarios por Donación",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Comentarios obtenidos correctamente\", function() {",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"    if (jsonData.length > 0) {",
+									"        pm.expect(jsonData[0].donation_id).to.eql(pm.environment.get(\"donation_id\"));",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/comments/donation/{{donation_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comments",
+								"donation",
+								"{{donation_id}}"
+							]
+						},
+						"description": "Obtiene todos los comentarios para una donación específica"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para la gestión de calificaciones y comentarios"
+		},
+		{
+			"name": "Notificaciones",
+			"item": [
+				{
+					"name": "Crear Notificación",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    pm.environment.set(\"notification_id\", jsonData.id);",
+									"    ",
+									"    pm.test(\"Notificación creada exitosamente\", function() {",
+									"        pm.expect(jsonData.id).to.exist;",
+									"        pm.expect(jsonData.message).to.exist;",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"{{user_id}}\",\n  \"message\": \"Tu solicitud de participación ha sido aprobada\",\n  \"read\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/notifications",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notifications"
+							]
+						},
+						"description": "Crea una nueva notificación para un usuario"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Notificaciones por Usuario",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Notificaciones obtenidas correctamente\", function() {",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"    if (jsonData.length > 0) {",
+									"        pm.expect(jsonData[0].user_id).to.eql(pm.environment.get(\"user_id\"));",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/notifications/user/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notifications",
+								"user",
+								"{{user_id}}"
+							]
+						},
+						"description": "Obtiene todas las notificaciones para un usuario específico"
+					},
+					"response": []
+				},
+				{
+					"name": "Marcar Notificación como Leída",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Notificación marcada como leída\", function() {",
+									"    pm.expect(jsonData.read).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"read\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/notifications/{{notification_id}}/read",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notifications",
+								"{{notification_id}}",
+								"read"
+							]
+						},
+						"description": "Marca una notificación como leída"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para la gestión de notificaciones"
+		},
+		{
+			"name": "Sugerencias",
+			"item": [
+				{
+					"name": "Crear Sugerencia",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    pm.environment.set(\"suggestion_id\", jsonData.id);",
+									"    ",
+									"    pm.test(\"Sugerencia creada exitosamente\", function() {",
+									"        pm.expect(jsonData.id).to.exist;",
+									"        pm.expect(jsonData.content).to.exist;",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"{{user_id}}\",\n  \"content\": \"Sugiero implementar un sistema de notificaciones por email\",\n  \"processed\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/suggestions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"suggestions"
+							]
+						},
+						"description": "Crea una nueva sugerencia"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Sugerencias",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Sugerencias obtenidas correctamente\", function() {",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/suggestions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"suggestions"
+							]
+						},
+						"description": "Obtiene todas las sugerencias"
+					},
+					"response": []
+				},
+				{
+					"name": "Marcar Sugerencia como Procesada",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Sugerencia marcada como procesada\", function() {",
+									"    pm.expect(jsonData.processed).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"processed\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/suggestions/{{suggestion_id}}/process",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"suggestions",
+								"{{suggestion_id}}",
+								"process"
+							]
+						},
+						"description": "Marca una sugerencia como procesada"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para la gestión de sugerencias"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3001",
+			"type": "string"
+		}
+	]
+}
